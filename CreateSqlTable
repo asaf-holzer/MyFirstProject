@@ -1,0 +1,78 @@
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class CreateSqlTable {
+	private static final  String URL="jdbc:mysql://localhost:3306/myfirstsqltable?createDatabaseIfNotExist=TRUE&useTimezone=TRUE&serverTimezone=UTC";
+	private static final String userName="root";
+	private static final String password="Asaf1980#Holzer5740*";
+	
+	
+	
+	public static String getUrl() {
+		return URL;
+	}
+
+
+
+	public static String getUsername() {
+		return userName;
+	}
+
+
+
+	public static String getPassword() {
+		return password;
+	}
+
+
+
+	public static void createTable() throws SQLException {
+		
+		
+			Connection connection= null;
+		
+		
+		String sql="CREATE TABLE `myfirstsqltable`.`office` "
+				+ "(id INT PRIMARY KEY NOT NULL,"
+				+ "name VARCHAR(20) NOT NULL,"
+				+"salary DECIMAL,"
+				+ "office VARCHAR(20) ,"
+				+ "specialty VARCHAR(20) ,"
+				+ "department VARCHAR(20) ,"
+				+ "group1 VARCHAR(20))";
+		try {
+			connection=DriverManager.getConnection(URL, userName, password);
+		PreparedStatement statement = connection.prepareStatement(sql);
+		statement.executeUpdate();
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			connection.close();
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

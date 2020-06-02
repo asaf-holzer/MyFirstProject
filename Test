@@ -1,0 +1,70 @@
+import java.sql.SQLException;
+
+import java.util.List;
+
+public class Test {
+
+	public static void print(List<compEmployee> arr) {
+		for (compEmployee object : arr) {
+			System.out.println(object);
+		}
+
+		System.out.println("***************");
+	}
+
+	public static void main(String[] args) throws ClassNotFoundException {
+		System.out.println("START");
+		Class.forName("com.mysql.cj.jdbc.Driver");
+
+		try {
+			CreateSqlTable.createTable();
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+		Secretary s1 = new Secretary(1, "Noa", 3000, "comp");
+		Secretary s2 = new Secretary(2, "Thila", 3500, "comp+");
+
+		Manager m1 = new Manager(3, "Aviv", 8000, "Java");
+		Manager m2 = new Manager(4, "Yoav", 8500, "Java+");
+
+		compEmployee e1 = new compEmployee(5, "Dana", 2000);
+		compEmployee e2 = new compEmployee(6, "Yelena", 1500);
+		compEmployee e3 = new compEmployee(7, "Boris", 2500);
+
+		Director d1 = new Director(8, "David", 15000, "Development", "Java");
+
+		Engineer en1 = new Engineer(9, "Moshe", 9000, "C++");
+		Engineer en2 = new Engineer(10, "Kobi", 9500, "C#");
+		try {
+			CRUD_DB.insertDB(s1);
+			CRUD_DB.insertDB(s2);
+			CRUD_DB.insertDB(m1);
+			CRUD_DB.insertDB(m2);
+			CRUD_DB.insertDB(e1);
+			CRUD_DB.insertDB(e2);
+			CRUD_DB.insertDB(e3);
+			CRUD_DB.insertDB(d1);
+			CRUD_DB.insertDB(en1);
+			CRUD_DB.insertDB(en2);
+
+			s1.setName("Noam");
+			CRUD_DB.updateDB(1, s1);
+
+			CRUD_DB.removeDB(5);
+
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			print(CRUD_DB.getBD());
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+
+		System.out.println("END");
+	}
+
+}

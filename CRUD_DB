@@ -1,0 +1,175 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+
+
+public class CRUD_DB {
+
+	public static void insertDB(compEmployee ce) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DriverManager.getConnection(CreateSqlTable.getUrl(), CreateSqlTable.getUsername(),
+					CreateSqlTable.getPassword());
+			String sql = "INSERT INTO `myfirstsqltable`.`office` (id,name,salary,office,specialty,department,group1)"
+					+ " VALUES (?,?,?,?,?,?,?)";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, ce.getId());
+			statement.setString(2, ce.getName());
+			statement.setDouble(3, ce.getSalary());
+			statement.setString(4, null);
+			statement.setString(5, null);
+			statement.setString(6, null);
+			statement.setString(7, null);
+
+			if (ce instanceof Secretary) {
+				statement.setString(4, ((Secretary) ce).getOffice());
+				statement.setString(5, null);
+				statement.setString(6, null);
+				statement.setString(7, null);
+
+			} else if (ce instanceof Engineer) {
+				statement.setString(4, null);
+				statement.setString(5, ((Engineer) ce).getSpecialty());
+				statement.setString(6, null);
+				statement.setString(7, null);
+
+			} else if (ce instanceof Manager) {
+				if (!(ce instanceof Director)) {
+					statement.setString(4, null);
+					statement.setString(5, null);
+					statement.setString(6, ((Manager) ce).getDepartment());
+					statement.setString(7, null);
+
+				} else if (ce instanceof Director) {
+					statement.setString(4, null);
+					statement.setString(5, null);
+					statement.setString(6, ((Manager) ce).getDepartment());
+					statement.setString(7, ((Director) ce).getGroup());
+				}
+			}
+			statement.execute();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			connection.close();
+		}
+	}
+
+	public static void removeDB(int id) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DriverManager.getConnection(CreateSqlTable.getUrl(), CreateSqlTable.getUsername(),
+					CreateSqlTable.getPassword());
+
+			String sql = "DELETE FROM `myfirstsqltable`.`office` WHERE id=?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, id);
+			statement.execute();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			connection.close();
+		}
+	}
+
+	public static void updateDB(int id, compEmployee ce) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = DriverManager.getConnection(CreateSqlTable.getUrl(), CreateSqlTable.getUsername(),
+					CreateSqlTable.getPassword());
+
+			String sql = "UPDATE `myfirstsqltable`.`office` SET name=?, "
+					+ "salary=?, office=?,specialty=?, department=?, group1=? WHERE id=?";
+
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, ce.getName());
+			statement.setDouble(2, ce.getSalary());
+			if (ce instanceof Secretary) {
+				statement.setString(3, ((Secretary) ce).getOffice());
+				statement.setString(4, null);
+				statement.setString(5, null);
+				statement.setString(6, null);
+				statement.setInt(7, ce.getId());
+			} else if (ce instanceof Engineer) {
+				statement.setString(3, null);
+				statement.setString(4, ((Engineer) ce).getSpecialty());
+				statement.setString(5, null);
+				statement.setString(6, null);
+				statement.setInt(7, ce.getId());
+			} else if (ce instanceof Manager) {
+				if (!(ce instanceof Director)) {
+					statement.setString(3, null);
+					statement.setString(4, null);
+					statement.setString(5, ((Manager) ce).getDepartment());
+					statement.setString(6, null);
+					statement.setInt(7, ce.getId());
+				} else if (ce instanceof Director) {
+					statement.setString(3, null);
+					statement.setString(4, null);
+					statement.setString(5, ((Manager) ce).getDepartment());
+					statement.setString(6, ((Director) ce).getGroup());
+					statement.setInt(7, ce.getId());
+				}
+			
+			}
+			statement.execute();
+
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			connection.close();
+		}
+	}
+
+	public static List<compEmployee> getBD() throws SQLException {
+		List<compEmployee> employees= new ArrayList<compEmployee>();
+		Connection connection=null;
+		try {
+			
+			connection = DriverManager.getConnection(CreateSqlTable.getUrl(), CreateSqlTable.getUsername(), CreateSqlTable.getPassword());
+			String sql="SELECT * FROM `myfirstsqltable`.`office`";
+			Statement statement= connection.createStatement();
+			ResultSet resultSet= statement.executeQuery(sql);
+			
+			
+			while(resultSet.next()) {
+				int id=resultSet.getInt(1);
+				String name=resultSet.getString(2);
+				double salary=resultSet.getDouble(3);
+				String office=resultSet.getString(4);
+				String specialty=resultSet.getString(5);
+				String department=resultSet.getString(6);
+				String group=resultSet.getString(7);
+				if (!(office==null)) {
+				employees.add(new Secretary(id, name, salary, office));	
+				}else if(!(specialty==null)){
+				employees.add(new Engineer(id, name, salary, specialty));
+				}else if(!(department==null)&&group==null) {
+					employees.add(new Manager(id, name, salary, department));
+				}else if(!(department==null)&&!(group==null)) {
+					employees.add(new Director(id, name, salary, department, group));
+				}else {
+					employees.add(new compEmployee(id, name, salary));
+				}
+				
+				
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			connection.close();
+		}
+		return employees;
+	}
+
+}

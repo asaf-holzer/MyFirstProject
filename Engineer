@@ -1,0 +1,54 @@
+
+public class Engineer extends compEmployee {
+
+	private String specialty;
+
+	public Engineer(int id, String name, double salary, String specialty) {
+		super(id, name, salary);
+		this.specialty = specialty;
+	}
+
+	public String getSpecialty() {
+		return specialty;
+	}
+
+	public void setSpecialty(String specialty) {
+		this.specialty = specialty;
+	}
+
+	@Override
+	public String toString() {
+		return "Engineer [specialty=" + specialty + ", toString()=" + super.toString() + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((specialty == null) ? 0 : specialty.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Engineer other = (Engineer) obj;
+		if (specialty == null) {
+			if (other.specialty != null)
+				return false;
+		} else if (!specialty.equals(other.specialty))
+			return false;
+		return true;
+	}
+	
+	
+	
+	
+	
+	
+}
